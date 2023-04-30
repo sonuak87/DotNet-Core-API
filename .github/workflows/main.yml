@@ -1,7 +1,7 @@
 name: Octopus Project
 
 env:
-  project: DevProject
+  project: Random Quotes
   server: https://dsmercy.octopus.app
   APIKEY: API-OJI7E16EKSZPY7KZ9D690UYD88ITETM
 
