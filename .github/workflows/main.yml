@@ -2,7 +2,7 @@ name: MyBuild
 
 on:
   push:
-    branches: master
+    branches: main
   schedule:
     - cron: "0 07 * * *"
   workflow_dispatch:
