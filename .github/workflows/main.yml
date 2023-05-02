@@ -71,5 +71,13 @@ jobs:
         api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
         server: ${{ secrets.OCTOPUSSERVERURL }}
         packages: "artifacts/VeggiFoodAPI.${{ env.PACKAGE_VERSION }}.zip"
-        space: ${{ secrets.OCTOPUSSERVER_SPACE }}				
-		
+        space: ${{ secrets.OCTOPUSSERVER_SPACE }}
+    - name: Create and deploy release
+      uses: OctopusDeploy/create-release-action@v1
+      with:
+        api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
+        server: ${{ secrets.OCTOPUSSERVERURL }}
+        space: ${{ secrets.OCTOPUSSERVER_SPACE }}
+        project: "VeggiFoodAPI"
+        deploy_to: "Development"
+        progress: true
