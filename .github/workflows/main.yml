@@ -25,7 +25,7 @@ jobs:
       with:
         dotnet-version: '6.0.x'
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore ./Web API
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Create artifacts folder
@@ -33,7 +33,7 @@ jobs:
         mkdir "$GITHUB_WORKSPACE/artifacts"
         mkdir "$GITHUB_WORKSPACE/artifacts/VeggiFoodAPI"
     - name: Publish OctoPetShopWeb
-      run: dotnet publish VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/VeggiFoodAPI"
+      run: dotnet publish Web API/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/VeggiFoodAPI"
     - name: Install Octopus CLI
       uses: OctopusDeploy/install-octopus-cli-action@v1
       with:
