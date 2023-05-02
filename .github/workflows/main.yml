@@ -45,7 +45,7 @@ jobs:
         version: latest
     - name: Package VeggiFoodAPI
       run: |
-        octo pack --id="VeggiFoodAPI" --format="Zip" --version="$PACKAGE_VERSION"  --outFolder="$GITHUB_WORKSPACE/artifacts"
+        octo pack --id="VeggiFoodAPI" --format="Zip" --version="$PACKAGE_VERSION"  --basePath="$GITHUB_WORKSPACE/artifacts/VeggiFoodAPI" --outFolder="$GITHUB_WORKSPACE/artifacts"
     - name: Push VeggiFoodAPI packages
       uses: OctopusDeploy/push-package-action@v1
       with:
