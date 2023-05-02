@@ -13,6 +13,7 @@ on:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -25,10 +26,12 @@ jobs:
     - name: Install dependencies
       run: dotnet restore ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj
     - name: Build
-      run: dotnet build ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore		
-  artifacts:
-    needs: build
+      run: dotnet build ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore
+		
+  deploy:
+	needs: build
     runs-on: ubuntu-latest
+    
     steps:
     - uses: actions/checkout@v2
     - name: Set Version
@@ -45,20 +48,7 @@ jobs:
         mkdir "$GITHUB_WORKSPACE/artifacts/VeggiFoodAPI"
     - name: Publish VeggiFoodAPI
       run: dotnet publish WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/VeggiFoodAPI"
-  deploy:
-    needs: artifacts
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set Version
-      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '6.0.x'
-    - name: Install dependencies
-      run: dotnet restore ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj
-    - name: Install Octopus CLI
+	  - name: Install Octopus CLI
       uses: OctopusDeploy/install-octopus-cli-action@v1
       with:
         version: latest
