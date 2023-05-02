@@ -27,7 +27,7 @@ jobs:
     - name: Install dependencies
       run: dotnet restore ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build ./WebAPI/VeggiFood.sln --configuration Release --no-restore
     - name: Create artifacts folder
       run: |
         mkdir "$GITHUB_WORKSPACE/artifacts"
