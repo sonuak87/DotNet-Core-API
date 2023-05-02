@@ -10,7 +10,7 @@ on:
       default: 'warning'
 
 jobs:
-  Build:
+  BuildPublish:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -24,33 +24,37 @@ jobs:
       run: dotnet restore ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj
     - name: Build
       run: dotnet build ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore		
-  PublishArtiFacts:
-    needs: Build
-    runs-on: ubuntu-latest    
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set Version
-      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '6.0.x'
-    - name: Install dependencies
-      run: dotnet restore ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj
-    - name: Publish VeggiFoodAPI
+    - name: Publish
       run: dotnet publish WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore --output publish
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         name: all-artifacts
         path: publish
-  PushArtiFacts:
-    needs: PublishArtiFacts
+  PushDeploy:
+    needs: BuildPublish
     runs-on: ubuntu-latest    
     steps:
     - name: Get Artifacts
       uses: actions/download-artifact@v3
       with:
         name: all-artifacts
-    - name: Output Contents
-      run: ls
+    - name: Package VeggiFoodAPI
+      run: |
+        octo pack --id="VeggiFoodAPI" --format="Zip" --version="$PACKAGE_VERSION"  --outFolder="$GITHUB_WORKSPACE/artifacts"
+    - name: Push VeggiFoodAPI packages
+      uses: OctopusDeploy/push-package-action@v1
+      with:
+        api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
+        server: ${{ secrets.OCTOPUSSERVERURL }}
+        packages: "artifacts/VeggiFoodAPI.${{ env.PACKAGE_VERSION }}.zip"
+        space: ${{ secrets.OCTOPUSSERVER_SPACE }}
+    - name: Create and deploy release
+      uses: OctopusDeploy/create-release-action@v1
+      with:
+        api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
+        server: ${{ secrets.OCTOPUSSERVERURL }}
+        space: ${{ secrets.OCTOPUSSERVER_SPACE }}
+        project: "VeggiFoodAPI"
+        deploy_to: "Development"
+        progress: true
