@@ -45,7 +45,7 @@ jobs:
         mkdir "$GITHUB_WORKSPACE/artifacts/VeggiFoodAPI"
     - name: Publish VeggiFoodAPI
       run: dotnet publish WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/VeggiFoodAPI"
-	  - name: Install Octopus CLI
+    - name: Install Octopus CLI
       uses: OctopusDeploy/install-octopus-cli-action@v1
       with:
         version: latest
