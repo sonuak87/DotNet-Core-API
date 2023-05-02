@@ -39,6 +39,10 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: all-artifacts
+    - name: Install Octopus CLI
+      uses: OctopusDeploy/install-octopus-cli-action@v1
+      with:
+        version: latest
     - name: Package VeggiFoodAPI
       run: |
         octo pack --id="VeggiFoodAPI" --format="Zip" --version="$PACKAGE_VERSION"  --outFolder="$GITHUB_WORKSPACE/artifacts"
