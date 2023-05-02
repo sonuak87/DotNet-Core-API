@@ -12,7 +12,7 @@ on:
       default: 'warning'
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -26,8 +26,8 @@ jobs:
       run: dotnet restore ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj
     - name: Build
       run: dotnet build ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore		
-  deploy:
-    needs: build
+  PublishArtiFacts:
+    needs: Build
     runs-on: ubuntu-latest    
     steps:
     - uses: actions/checkout@v2
@@ -59,6 +59,10 @@ jobs:
         server: ${{ secrets.OCTOPUSSERVERURL }}
         packages: "artifacts/VeggiFoodAPI.${{ env.PACKAGE_VERSION }}.zip"
         space: ${{ secrets.OCTOPUSSERVER_SPACE }}
+  Deploy:
+    needs: PublishArtiFacts
+    runs-on: ubuntu-latest    
+    steps:
     - name: Create and deploy release
       uses: OctopusDeploy/create-release-action@v1
       with:
