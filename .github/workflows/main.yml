@@ -52,6 +52,6 @@ jobs:
     - name: output contents
       run: ls 
     - name: output contents1
-      run: "$GITHUB_WORKSPACE/artifacts/my-artifact"
+      run: "$GITHUB_WORKSPACE/artifacts/my-artifact/**/*"
     - name: output contents2
-      run: "$GITHUB_WORKSPACE/artifacts"
+      run: "$GITHUB_WORKSPACE/artifacts/**/*"
