@@ -26,8 +26,7 @@ jobs:
     - name: Install dependencies
       run: dotnet restore ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj
     - name: Build
-      run: dotnet build ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore
-		
+      run: dotnet build ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore		
   deploy:
 	needs: build
     runs-on: ubuntu-latest
