@@ -41,12 +41,17 @@ jobs:
       run: |
         mkdir "$GITHUB_WORKSPACE/artifacts"
         mkdir "$GITHUB_WORKSPACE/artifacts/VeggiFoodAPI"
+        mkdir "$GITHUB_WORKSPACE/artifacts/my-artifact"
     - name: Publish VeggiFoodAPI
-      run: dotnet publish WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore 
+      run: dotnet publish WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/VeggiFoodAPI"
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         name: my-artifact
-        path: artifact
+        path: "$GITHUB_WORKSPACE/artifacts/my-artifact"
     - name: output contents
-      run: ls
+      run: ls 
+    - name: output contents1
+      run: "$GITHUB_WORKSPACE/artifacts/my-artifact"
+    - name: output contents2
+      run: "$GITHUB_WORKSPACE/artifacts"
