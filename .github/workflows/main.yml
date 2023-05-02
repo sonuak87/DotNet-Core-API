@@ -37,19 +37,20 @@ jobs:
         dotnet-version: '6.0.x'
     - name: Install dependencies
       run: dotnet restore ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj
-    - name: Create artifacts folder
-      run: |
-        mkdir "$GITHUB_WORKSPACE/artifacts"
-        mkdir "$GITHUB_WORKSPACE/artifacts/VeggiFoodAPI"
-        mkdir "$GITHUB_WORKSPACE/artifacts/my-artifact"
     - name: Publish VeggiFoodAPI
       run: dotnet publish WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore --output publish
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: my-artifact
+        name: all-artifacts
         path: publish
-    - name: output contents
-      run: ls 
-    - name: output contents2
-      run: ls publish
+  PushArtiFacts:
+    needs: PublishArtiFacts
+    runs-on: ubuntu-latest    
+    steps:
+    - name: Get Artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: all-artifacts
+    - name: Output Contents
+      run: ls
