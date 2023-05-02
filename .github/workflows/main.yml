@@ -25,7 +25,7 @@ jobs:
       with:
         dotnet-version: '6.0.x'
     - name: Install dependencies
-      run: dotnet restore ./Web API
+      run: dotnet restore ./Web API/VeggiFoodAPI/VeggiFoodAPI.csproj
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Create artifacts folder
