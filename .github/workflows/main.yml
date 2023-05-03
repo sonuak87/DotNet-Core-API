@@ -10,7 +10,7 @@ on:
       default: 'warning'
 
 jobs:
-  BuildPublish:
+  Build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -23,44 +23,28 @@ jobs:
     - name: Install dependencies
       run: dotnet restore ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj
     - name: Build
-      run: dotnet build ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore		
-    - name: Publish
-      run: dotnet publish WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore --output publish
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: all-artifacts
-        path: publish
-  PushDeploy:
-    needs: BuildPublish
+      run: dotnet build ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore
+  PublishArtifacts:
+    needs: Build
     runs-on: ubuntu-latest    
     steps:
-    - name: Get Artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: all-artifacts
+    - name: Create artifacts folder
+      run: |
+        mkdir "$GITHUB_WORKSPACE/artifacts"
+        mkdir "$GITHUB_WORKSPACE/artifacts/VeggiFoodAPI"
+    - name: Publish VeggiFoodAPI
+      run: dotnet publish WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/VeggiFoodAPI"
     - name: Install Octopus CLI
       uses: OctopusDeploy/install-octopus-cli-action@v1
       with:
         version: latest
     - name: Package VeggiFoodAPI
       run: |
-        octo pack --id="VeggiFoodAPI" --format="Zip" --version="$PACKAGE_VERSION"  all-artifacts --outFolder="$GITHUB_WORKSPACE/artifacts"
-    - name: list
-      run: ls
-    - name: Push VeggiFoodAPI packages
+        octo pack --id="VeggiFoodAPI" --format="Zip" --version="$PACKAGE_VERSION" --basePath="$GITHUB_WORKSPACE/artifacts/VeggiFoodAPI" --outFolder="$GITHUB_WORKSPACE/artifacts"
+    - name: Push packages to Octopus
       uses: OctopusDeploy/push-package-action@v1
       with:
         api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
         server: ${{ secrets.OCTOPUSSERVERURL }}
         packages: "artifacts/VeggiFoodAPI.${{ env.PACKAGE_VERSION }}.zip"
         space: ${{ secrets.OCTOPUSSERVER_SPACE }}
-    - name: Create and deploy release
-      uses: OctopusDeploy/create-release-action@v1
-      with:
-        api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
-        server: ${{ secrets.OCTOPUSSERVERURL }}
-        space: ${{ secrets.OCTOPUSSERVER_SPACE }}
-        project: "VeggiFoodAPI"
-        deploy_to: "Development"
-        progress: true
