@@ -7,15 +7,13 @@ on:
     logLevel:
       description: 'Log level'
       required: true
-      default: 'warning'
+      default: 'information'
 
 jobs:
   Build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set Version
-      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
@@ -28,6 +26,14 @@ jobs:
     needs: Build
     runs-on: ubuntu-latest    
     steps:
+    - name: Set Version
+      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.0.x'
+    - name: Install dependencies
+      run: dotnet restore ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj
     - uses: actions/checkout@v2
     - name: Create artifacts folder
       run: |
