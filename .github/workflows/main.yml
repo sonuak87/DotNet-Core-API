@@ -28,6 +28,7 @@ jobs:
     needs: Build
     runs-on: ubuntu-latest    
     steps:
+    - uses: actions/checkout@v2
     - name: Create artifacts folder
       run: |
         mkdir "$GITHUB_WORKSPACE/artifacts"
