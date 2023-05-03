@@ -55,5 +55,5 @@ jobs:
         server: ${{ secrets.OCTOPUSSERVERURL }}
         space: ${{ secrets.OCTOPUSSERVER_SPACE }}
         project: "VeggiFoodAPI"
-        deploy_to: "Staging"
+        deploy_to: "Development"
         progress: false
