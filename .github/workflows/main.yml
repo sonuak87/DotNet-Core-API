@@ -3,28 +3,19 @@ name: MyBuild
 on:
   push:
     branches: main
+  schedule:
+    - cron: "0 07 * * *"
   workflow_dispatch:
     logLevel:
       description: 'Log level'
       required: true
-      default: 'information'
+      default: 'warning'
 
 jobs:
-  Build:
+  build:
+
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '6.0.x'
-    - name: Install dependencies
-      run: dotnet restore ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj
-    - name: Build
-      run: dotnet build ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore
-  PublishArtifacts:
-    needs: Build
-    runs-on: ubuntu-latest    
+
     steps:
     - uses: actions/checkout@v2
     - name: Set Version
@@ -35,6 +26,8 @@ jobs:
         dotnet-version: '6.0.x'
     - name: Install dependencies
       run: dotnet restore ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj
+    - name: Build
+      run: dotnet build ./WebAPI/VeggiFoodAPI/VeggiFoodAPI.csproj --configuration Release --no-restore
     - name: Create artifacts folder
       run: |
         mkdir "$GITHUB_WORKSPACE/artifacts"
@@ -48,10 +41,19 @@ jobs:
     - name: Package VeggiFoodAPI
       run: |
         octo pack --id="VeggiFoodAPI" --format="Zip" --version="$PACKAGE_VERSION" --basePath="$GITHUB_WORKSPACE/artifacts/VeggiFoodAPI" --outFolder="$GITHUB_WORKSPACE/artifacts"
-    - name: Push packages to Octopus
+    - name: Push VeggiFoodAPI packages
       uses: OctopusDeploy/push-package-action@v1
       with:
         api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
         server: ${{ secrets.OCTOPUSSERVERURL }}
         packages: "artifacts/VeggiFoodAPI.${{ env.PACKAGE_VERSION }}.zip"
         space: ${{ secrets.OCTOPUSSERVER_SPACE }}
+    - name: Create and deploy release
+      uses: OctopusDeploy/create-release-action@v1
+      with:
+        api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
+        server: ${{ secrets.OCTOPUSSERVERURL }}
+        space: ${{ secrets.OCTOPUSSERVER_SPACE }}
+        project: "VeggiFoodAPI"
+        deploy_to: "Staging"
+        progress: false
