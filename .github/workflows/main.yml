@@ -17,6 +17,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Set package Version for main branch
+      if: github.ref == 'refs/heads/main'
+      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER-prod" >> $GITHUB_ENV
+    - name: Set package Version for feature branch
+      if: github.ref == 'refs/heads/feature/**'
+      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER-dev" >> $GITHUB_ENV
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
@@ -30,8 +36,12 @@ jobs:
     runs-on: ubuntu-latest    
     steps:
     - uses: actions/checkout@v2
-    - name: Set Version
-      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+    - name: Set package Version for main branch
+      if: github.ref == 'refs/heads/main'
+      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER-prod" >> $GITHUB_ENV
+    - name: Set package Version for feature branch
+      if: github.ref == 'refs/heads/feature/**'
+      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER-dev" >> $GITHUB_ENV
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
@@ -49,6 +59,7 @@ jobs:
       with:
         version: latest
     - name: Package VeggiFoodAPI
+      if: github.ref == 'refs/heads/main'
       run: |
         octo pack --id="VeggiFoodAPI" --format="Zip" --version="$PACKAGE_VERSION" --basePath="$GITHUB_WORKSPACE/artifacts/VeggiFoodAPI" --outFolder="$GITHUB_WORKSPACE/artifacts"
     - name: Push packages to Octopus
