@@ -33,6 +33,6 @@ jobs:
     - name: Set Version
       run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
     - name: Show default environment variables
-        run: |
-          echo "The version is: $PACKAGE_VERSION"
-          echo "The version is: $PACKAGE_VERSION.rc"
+      run: |
+        echo "The version is: $PACKAGE_VERSION"
+        echo "The version is: $PACKAGE_VERSION.rc"
