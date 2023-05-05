@@ -2,7 +2,10 @@ name: MyBuild
 
 on:
   push:
-    branches: main
+    branches: 
+     - main
+     - 'feature/**'
+     - 'dev/**'
   workflow_dispatch:
     logLevel:
       description: 'Log level'
