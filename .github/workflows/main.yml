@@ -53,7 +53,6 @@ jobs:
       with:
         version: latest
     - name: Package VeggiFoodAPI
-      if: github.ref == 'refs/heads/main'
       run: |
         octo pack --id="VeggiFoodAPI" --format="Zip" --version="$PACKAGE_VERSION" --basePath="$GITHUB_WORKSPACE/artifacts/VeggiFoodAPI" --outFolder="$GITHUB_WORKSPACE/artifacts"
     - name: Push packages to Octopus
