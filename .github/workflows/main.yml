@@ -32,10 +32,10 @@ jobs:
     - uses: actions/checkout@v2
     - name: Set package Version for main branch
       if: github.ref == 'refs/heads/main'
-      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER-prod" >> $GITHUB_ENV
+      run: echo "PACKAGE_VERSION=$(date +'%Y-%m-%d %H:%M:%S').$GITHUB_RUN_NUMBER-prod" >> $GITHUB_ENV
     - name: Set package Version for feature branch
       if: contains(github.ref, 'feature')
-      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER-dev" >> $GITHUB_ENV
+      run: echo "PACKAGE_VERSION=$(date +'%Y-%m-%d %H:%M:%S').$GITHUB_RUN_NUMBER-dev" >> $GITHUB_ENV
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
